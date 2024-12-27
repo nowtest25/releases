@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprint Release Notes</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+        :root {
+            --navy: #0056b3;
+            --light-navy: #007BFF;
+            --pale-blue: #f9f9f9;
+            --light-blue: #fff;
+        }
+
+        .department-section {
+            font-size: 0.875rem;
+            background-color: var(--pale-blue);
+            border-left: 4px solid var(--light-navy);
+            page-break-inside: avoid;
+        }
+        .department-section h3 {
+            font-size: 1rem;
+            color: var(--navy);
+        }
+        .story-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 9999px;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background-color: var(--light-navy);
+            color: white;
+        }
+        .department-section ul {
+            font-size: 0.75rem;
+        }
+        .sprint-summary {
+            background-color: var(--light-blue);
+        }
+        .sprint-header {
+            background-color: var(--navy);
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        .sprint-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--light-navy) 0%, transparent 50%);
+            opacity: 0.4;
+        }
+        .sprint-number {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            text-align: left;
+        }
+        .sprint-date {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            position: relative;
+            text-align: left;
+        }
+        .sprint-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 6rem; /* Increased from 4rem to 6rem */
+            opacity: 0.2;
+        }
+        .department-header {
+            display: flex;
+            align-items: center;
+        }
+        .department-header i {
+            font-size: 1rem;
+            margin-right: 0.5rem;
+        }
+        .department-header h2 {
+            font-size: 1rem;
+        }
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 1rem;
+            color: var(--navy);
+        }
+        @media print {
+            body {
+                width: 210mm;
+                height: auto; /* Adjust height for content */
+            }
+            .no-print {
+                display: none; /* Hide elements that should not be printed */
+            }
+            /* Additional styles to ensure visuals are maintained */
+            .bg-white {
+                background-color: white !important;
+            }
+            .rounded-xl {
+                border-radius: 0 !important; /* Adjust rounded corners if needed */
+            }
+            .shadow-xl {
+                box-shadow: none !important; /* Remove shadows for print */
+            }
+        }
+        .sprint-logo {
+            max-height: 100%; /* Ensure the logo fits within the header */
+            height: 100%; /* Maintain aspect ratio */
+        }
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 30px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 20px;
+        }
+        .header {
+            background-color: #0056b3;
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            grid-column: span 2;
+            border-radius: 2.5%;
+        }
+        .header .logo-container {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .header .operations-weekly {
+            flex: 1;
+        }
+        .header h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .logo {
+            width: 100px;
+            height: auto;
+        }
+        .section {
+            margin-top: 0;
+            flex: 1;
+        }
+        .section h5 {
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .section ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .section ul li {
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+        .section ul li::before {
+            content: "";
+            color: #4CAF50;
+            margin-right: 15px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .priority-list, .action-items, .updates {
+            height: 100%;
+        }
+        .combined-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: 100%;
+        }
+        .priority-list h5, .action-items h5, .updates h5 {
+            font-size: 18px;
+        }
+        .status-in-progress {
+            color: #FFA500; /* Orange for In Progress */
+        }
+        .status-in-business-user-confirmation {
+            color: #ff0000; /* Red for Business User Confirmation */
+        }
+        .status-in-review {
+            color: #007BFF; /* Blue for In Review */
+        }
+        .status-datamigration {
+            color: #de2d2d; /* Red for Data Migration */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-8">
+    <div id="content" class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8">
+        <div class="sprint-header flex items-center">
+            <div class="logo-container" style="width: 25%; height: 100%; display: flex; align-items: center; background-color: transparent;">
+                <img src="/Issue_Tracker/NO_Image.png" alt="Logo" class="sprint-logo" style="height: 100%; width: auto; opacity: 1; border-radius: 0.5rem;">
+            </div>
+            <div style="margin-left: 1rem; display: flex; flex-direction: column; justify-content: center;">
+                <h1 class="sprint-number" style="margin: 0; font-size: 2.5rem; font-weight: 700; color: white;">Release 14.00.00</h1>
+                <p class="sprint-date" style="margin: 0; font-size: 1.25rem; color: white;">Planned Date: Dec 26th 2024</p>
+            </div>
+            <i class="fas fa-glasses sprint-icon" style="font-size: 6rem; margin-left: auto; opacity: 0.2;"></i>
+        </div>
+
+        <div class="container">
+            <div class="priority-list">
+                <!-- Field Operations Column -->
+                <div class="bg-white p-4 rounded-xl mb-0">
+                    <div class="department-header mb-3">
+                        <i class="fas fa-tools text-navy-800"></i>
+                        <h2 class="font-bold text-navy-800">Field Operations</h2>
+                    </div>
+                    <ul class="list-none pl-0 text-sm">
+                        <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-1323: Internal Server Error on Cart Merge/Cancel</li>
+                        <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-1110: Update Logic for Inactive Store Communication</li>
+                        <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-1049: Intake: Error Message for Production Patients</li>
+                        <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-1029: Fix Appointment Scheduler Autofill</li>
+                        <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-1007: IRIS: Zero Quantity Still Moves to On Order</li>
+                        <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-770: Receipt Missing Pending Balance for Patient Orders</li>
+                        <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-748: Display Insurance/Refund in CC Report</li>
+                        <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-300: Cart Merge on Account Sign-In</li>
+                        <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-188: Error Message on Dispensing Orders</li>
+                        <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-223: Franchise Store Orders Missing Band Costs</li>
+                        <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-152: Policy Violation: Cash Refund for Non-Same-Day Orders</li>
+                    </ul>
+                </div>
+
+                <!-- Distribution Center Column -->
+                <div class="bg-white p-4 rounded-xl mb-0">
+                    <div class="department-header mb-3">
+                        <i class="fas fa-warehouse text-navy-800"></i>
+                        <h2 class="font-bold text-navy-800">Distribution Center</h2>
+                    </div>
+                    <ul class="list-none pl-0 text-sm">
+                        <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-786: Add Prefix to License Plate for Frame Shipments</li>
+                        <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-757: Prism Values Changing on Order Remake</li>
+                        <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-551: Duplicate Transfers for Now Job Orders</li>
+                        <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-381: Multiple Assignments on Single Transfer</li>
+                        <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-336: Order Status: Pending Store Trace Fix</li>
+                        <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-49: Order Lens Selection UI Updates</li>
+                        <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-48: Job Tracking: Display Job Transfer Details</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Marketing Column -->
+            <div class="bg-white p-4 rounded-xl">
+                <div class="department-header mb-3">
+                    <i class="fas fa-bullhorn text-navy-800"></i>
+                    <h2 class="font-bold text-navy-800">Marketing</h2>
+                </div>
+                <ul class="list-none pl-0 text-sm">
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-1411: Guided Sales: Unable to Place Order for Guest Users</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-1232: Support Multiple Domains in Guided Sales</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-1090: Guided Sales: Statewise Launch</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-1084: Guided Sales: Daywise Message Updates</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-1027: Incorrect Closed Store Status Across Website</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-1026: Menu Options Display on Hover</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-1025: Add Hyperlink for Eye Exam Booking</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-1024: Submenu Call Center Number Not Clickable</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-995: Scheduler Error: Lane Closure Impacting Other Lanes</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-931: SEO Redirect for Closed Store</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-929: Filters Not Persisting Across Tabs</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-926: Update Sitemaps for Blogs & Pages</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-919: Add Special Store to Five9 Connector</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-794: Remove Master Lookup Brand Code Mappings</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-739: Refer a Friend: Replace Downloadable PDF</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-711: Ecommerce Events Missing in GA4 Post-IRIS Launch</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-560: Remove "My Eyelab" from Now Optics Site</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-545: Create Unique ID in Emarsys Popup</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-328: Dr Consultation: Closed Day Error</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-284: Dr Consultation: Separate Doctor Notes by Line</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-280: Retarget Customers Abandoning Product Pages</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-272: Loyalty Club: Row Update Issues</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-226: VTO: Associate Buy Now Redirect Fix</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-216: Dr Consultation: Enable/Disable Logic</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-259: Guided Sales: Mobile/Tablet View Fixes</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-35: Home: Search Stores Within 50-Mile Radius</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-102: Scheduler: Calendar View for Doctor Availability</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-440: Product Filters Resetting Automatically</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-47: Emarsys Web Extend Popup Issue</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-81: Mobile: Screen Reset on Form Progression</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-236: Guided Sales: One-Tab Experience</li>
+                    <li class="mb-2"><i class="fas fa-check text-green-500 mr-2"></i>IR-39: My Account: Add Favorites to Category Pages</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Upcoming:</strong> Release 0015 - Planned Date: Jan 15th 2025</p> <!-- Made "Upcoming:" bold -->
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('exportPDF').addEventListener('click', function() {
+            const element = document.getElementById('content');
+            const opt = {
+                margin: 0,
+                filename: 'sprint_release_notes.pdf',
+                image: { type: 'jpeg', quality: 1.0 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        });
+    </script>
+</body>
+</html>
+
